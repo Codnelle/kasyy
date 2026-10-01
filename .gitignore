@@ -1,0 +1,6 @@
+node_modules/
+_raw/server.log
+.DS_Store
+# local dev server log (LAN IPs / user agents of test devices)
+serve-lan.log
+*.log

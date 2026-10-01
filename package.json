@@ -1,0 +1,12 @@
+{
+  "name": "kasy-portfolio",
+  "version": "1.0.0",
+  "description": "Kashish Sharma portfolio — hand-coded editable site (/pm and /kasy). See web/.",
+  "type": "module",
+  "scripts": {
+    "start": "node serve.mjs",
+    "serve": "node serve.mjs",
+    "rebuild": "node tools/crawl.mjs && node tools/build.mjs"
+  },
+  "private": true
+}

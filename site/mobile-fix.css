@@ -1,0 +1,184 @@
+/* ==========================================================================
+   mobile-fix.css — makes the existing Framer site responsive on phones.
+   Everything is scoped to @media (max-width: 810px); desktop is untouched.
+   The site was designed for a single 1200px breakpoint with fluid flex/clamp
+   values, so most of it reflows once the viewport uses the real device width
+   (see the inline viewport script injected by build.mjs). These rules fix the
+   pinned / fixed-column compositions that don't reflow on their own.
+   ========================================================================== */
+@media (max-width: 810px){
+
+  /* `clip`, not `hidden`: hidden on both html + body turns body into a scroll
+     container, which silently breaks every position:sticky scene on phones
+     (the /kasy head scene scrolled away instead of pinning). */
+  html, body{ overflow-x:hidden !important; }
+  @supports (overflow-x:clip){ html, body{ overflow-x:clip !important; } }
+
+  /* Let row-based flex blocks wrap instead of squeezing fixed columns
+     (case-study cards, meta rows, split sections, etc.) */
+  [style*="display:flex"]{ flex-wrap:wrap !important; }
+
+  /* NOTE: every selector below is written twice — `a:b` (the pre-rendered HTML)
+     and `a: b` (after React hydrates, it re-serialises inline styles WITH a
+     space). Matching only one form made these fixes vanish right after load. */
+
+  /* --- Hero face-sticker containers hold [tags cluster, face]:
+         /pm  (top:-120px; right:-14px) and /kasy (right:17vw; top:34%).
+         On phones: a normal centered block — face first, then the tags
+         wrapping underneath at full width. --- */
+  [style*="top:-120px"][style*="right:-14px"],
+  [style*="top: -120px"][style*="right: -14px"],
+  [style*="right:17vw"][style*="top:34%"],
+  [style*="right: 17vw"][style*="top: 34%"]{
+    position:static !important; inset:auto !important;
+    width:100% !important; height:auto !important;
+    display:flex !important; flex-direction:column !important; align-items:center !important;
+    margin:8px 0 44px !important; z-index:1 !important;
+  }
+  [style*="top:-120px"][style*="right:-14px"] > div:last-child,
+  [style*="top: -120px"][style*="right: -14px"] > div:last-child,
+  [style*="right:17vw"][style*="top:34%"] > div:last-child,
+  [style*="right: 17vw"][style*="top: 34%"] > div:last-child{   /* the face */
+    order:-1 !important; width:130px !important; height:138px !important; flex:0 0 auto !important;
+  }
+
+  /* --- Hero tag clusters (absolute, negative inset: /pm -38%, /kasy -44%) ->
+         flatten every descendant into a normal wrapped, centered row. --- */
+  [style*="position:absolute;inset:-"],
+  [style*="position: absolute; inset: -"]{
+    position:static !important; inset:auto !important;
+    width:100% !important; height:auto !important;
+    margin:16px 0 26px !important;
+    display:flex !important; flex-wrap:wrap !important; gap:8px !important;
+    justify-content:center !important;
+  }
+  [style*="position:absolute;inset:-"] *,
+  [style*="position: absolute; inset: -"] *{
+    position:static !important; inset:auto !important;
+    left:auto !important; top:auto !important; right:auto !important; bottom:auto !important;
+    transform:none !important;
+  }
+  [style*="position:absolute;inset:-"] > div,
+  [style*="position: absolute; inset: -"] > div{ display:contents !important; }
+
+  /* --- /pm "Rooms I've spoken in": the clothesline packs 6 polaroids per line,
+         which pile on top of each other on a phone. Re-flow each line into a
+         pinned-polaroid grid (pegs + tilt kept, wire hidden). .kx-rooms is added
+         by pm-monitor.js. --- */
+  .kx-rooms > div:last-child{ gap:34px !important; }
+  .kx-rooms > div:last-child > div{
+    display:grid !important; grid-template-columns:repeat(3, minmax(0,1fr)) !important;
+    gap:40px 16px !important; height:auto !important;
+    padding:22px 18px 0 !important; box-sizing:border-box !important;
+  }
+  .kx-rooms > div:last-child > div > svg{ display:none !important; }
+  .kx-rooms > div:last-child > div > div{ position:relative !important; inset:auto !important; }
+  .kx-rooms > div:last-child > div > div > div{
+    position:relative !important; left:auto !important; top:auto !important;
+    width:auto !important; margin-left:0 !important;
+  }
+  .kx-rooms [style*="font-size:8.5px"], .kx-rooms [style*="font-size: 8.5px"]{ font-size:9.5px !important; }
+
+  /* Sections keep their desktop vertical padding (clamp(70–200px) + vh) on
+     phones, which stacked into 200–300px of empty sky between sections.
+     Tighten top/bottom only; horizontal padding is untouched. */
+  section[style*="padding:clamp("], section[style*="padding: clamp("]{
+    padding-top:60px !important; padding-bottom:60px !important;
+  }
+
+  /* /kasy hero: the decorative squiggle doodle pinned to the hero's bottom-left
+     corner lands on top of the intro paragraph on phones */
+  [style*="bottom:12%"][style*="left:4%"][style*="pointer-events:none"],
+  [style*="bottom: 12%"][style*="left: 4%"][style*="pointer-events: none"]{ display:none !important; }
+
+  /* /pm "Where I judge" IIT Madras card: the absolutely-positioned certificate
+     covered the location/“undergrad” tags — let it sit in the card's flow */
+  article:has(> a > img[src*="datahacks"]){ display:flex !important; flex-direction:column !important; }
+  a:has(> img[src*="datahacks"]){
+    position:relative !important; right:auto !important; top:auto !important;
+    order:9 !important; align-self:flex-end !important;
+    display:block !important; width:128px !important; margin:16px 4px 2px 0 !important;
+    transform:rotate(-4deg) !important;
+  }
+
+  /* /pm hero: the rotating "open to product roles" badge is pinned to the hero's
+     bottom-left corner, which on phones is on top of the spec sheet (the footer
+     already says "open to product roles") */
+  [style*="left:3vw"][style*="bottom:4vh"][style*="width:124px"],
+  [style*="left: 3vw"][style*="bottom: 4vh"][style*="width: 124px"]{ display:none !important; }
+
+  /* /kasy "Same brief. Different designer.": the VS disc sits at the vertical
+     middle of the box, which lands inside the KASY card once the cards stack —
+     give it its own row between the two cards instead */
+  div:has(> [style*="width:54px"][style*="height:54px"][style*="left:50%"][style*="top:50%"]) > div:nth-child(2),
+  div:has(> [style*="width: 54px"][style*="height: 54px"][style*="left: 50%"][style*="top: 50%"]) > div:nth-child(2){ order:2 !important; }
+  [style*="width:54px"][style*="height:54px"][style*="left:50%"][style*="top:50%"],
+  [style*="width: 54px"][style*="height: 54px"][style*="left: 50%"][style*="top: 50%"]{
+    position:relative !important; left:auto !important; top:auto !important; order:1 !important;
+    flex:0 0 54px !important; margin:-8px calc(50% - 27px) !important; z-index:3 !important;
+  }
+
+  /* /pm sticky note: keep the paperclip off the "spec sheet" label on phones */
+  .pm-clip{ font-size:44px !important; left:-12px !important; top:-32px !important; }
+}
+@media (max-width: 560px){
+  .kx-rooms > div:last-child > div{ grid-template-columns:repeat(2, minmax(0,1fr)) !important; }
+}
+
+
+/* /kasy: "Hire me for one of these" list removed at the user's request. The
+   "You can hire me for these" head scene (/kasy-head.js, .kh) lives in the same
+   container and still anchors to this (hidden) section, so hide only the list. */
+.framer-ikbgw3-container > section:not(.kh){ display:none !important; }
+
+/* /pm case studies: the original accordion is replaced by the "case files"
+   section built by /cases.js — hide it from first paint so it never flashes. */
+.framer-585cfa-container > section:not(.kcf){ display:none !important; }
+
+/* --------------------------------------------------------------------------
+   /pm hero: the "floating pills" cluster (inset:-38%) scatters and overlaps
+   at wide widths (percentage-based) and clips off-screen. Give it a real,
+   even layout at ALL widths so the pills sit tidily around the photo + widget
+   instead of piling on top of each other. (/pm-specific selectors; /kasy
+   hero uses different values and is untouched.)
+   -------------------------------------------------------------------------- */
+[style*="top:-120px"][style*="right:-14px"]{           /* the head / portrait */
+  position:static !important; inset:auto !important;
+  width:clamp(120px,13vw,168px) !important; height:auto !important;
+  margin:6px auto 20px !important; z-index:1 !important;
+}
+[style*="inset:-38%"]{                                  /* the pills cluster */
+  position:static !important; inset:auto !important; height:auto !important; width:auto !important;
+  margin:20px 0 8px !important;
+  display:flex !important; flex-wrap:wrap !important;
+  gap:10px !important; justify-content:flex-start !important; align-content:flex-start !important;
+}
+[style*="inset:-38%"] *{
+  position:static !important; inset:auto !important;
+  left:auto !important; top:auto !important; right:auto !important; bottom:auto !important;
+  transform:none !important;
+}
+[style*="inset:-38%"] > div{ display:contents !important; }
+
+/* Footer bottom bar: keep only "Designed at unreasonable hours." (user request) —
+   the Bangalore clock and the social links row are hidden (the socials live in
+   the "Elsewhere" section above the footer); the note is set a bit larger. */
+footer [style*="padding-top:26px"][style*="space-between"] > span:first-child,
+footer [style*="padding-top: 26px"][style*="space-between"] > span:first-child,
+footer [style*="padding-top:26px"][style*="space-between"] > div,
+footer [style*="padding-top: 26px"][style*="space-between"] > div{ display:none !important; }
+footer [style*="padding-top:26px"][style*="space-between"],
+footer [style*="padding-top: 26px"][style*="space-between"]{ justify-content:center !important; text-align:center !important; }
+footer [style*="padding-top:26px"][style*="space-between"] > span:last-child,
+footer [style*="padding-top: 26px"][style*="space-between"] > span:last-child{ font-size:clamp(14px,1.2vw,17px) !important; }
+
+/* /kasy: "My World" folder section removed at the user's request. */
+.framer-1msw4hy-container{ display:none !important; }
+
+/* The sky is a fixed canvas sized 100svh (the SMALLEST mobile viewport). When
+   iOS Safari collapses its toolbar the viewport grows past that and the dark
+   page colour showed as a black bar at the bottom — size it to the largest
+   viewport and give the page a sky-coloured fallback underneath. */
+canvas[style*="position:fixed"][style*="100svh"],
+canvas[style*="position: fixed"][style*="100svh"]{ height:100lvh !important; }
+html, body{ background-color:rgb(159,205,236) !important; }

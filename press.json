@@ -1,0 +1,41 @@
+{
+  "_readme": "Single source for the 'Elsewhere' section on /pm + /kasy, the footer social links, and the SEO tags (JSON-LD sameAs, rel=me). Fill in a url and rebuild (node _raw/build.mjs). Entries with an empty url are skipped everywhere, so nothing broken ever ships.",
+
+  "site": "https://kasy.framer.website",
+
+  "person": {
+    "name": "Kashish Sharma",
+    "alternateName": "Kasy",
+    "location": "Bangalore, India",
+    "awards": ["Microsoft MVP", "Google Summer of Code contributor (2023, 2025)"]
+  },
+
+  "pages": {
+    "index": {
+      "title": "Kashish Sharma (Kasy) — Product & Design Portfolio",
+      "description": "Kashish Sharma (Kasy): product manager and designer from Bangalore. Microsoft MVP, Google Summer of Code contributor, speaker. Pick a side: product or design."
+    },
+    "pm": {
+      "title": "Kashish Sharma — Product Manager · Microsoft MVP",
+      "description": "Kashish Sharma (Kasy) is a product manager in Bangalore who ships AI products end to end — Microsoft MVP, Google Summer of Code contributor, and speaker at Microsoft Build and the Microsoft AI Tour."
+    },
+    "kasy": {
+      "title": "Kasy — Designer & Creative Developer · Kashish Sharma",
+      "description": "Kasy (Kashish Sharma) designs and builds scroll stories, storefronts, motion and websites that move. Creative development, art direction and fast shipping, from Bangalore."
+    }
+  },
+
+  "profiles": [
+    { "network": "instagram", "label": "Instagram", "url": "https://instagram.com/kasy.ssh" },
+    { "network": "linkedin",  "label": "LinkedIn",  "url": "https://www.linkedin.com/in/kashishsharma601/" },
+    { "network": "youtube",   "label": "YouTube",   "url": "https://www.youtube.com/@KasyKube" },
+    { "network": "x",         "label": "X",         "url": "" },
+    { "network": "github",    "label": "GitHub",    "url": "" },
+    { "network": "topmate",   "label": "Topmate",   "url": "https://topmate.io/kashish_sharma" }
+  ],
+
+  "press": [
+    { "outlet": "Microsoft", "kind": "Blog",    "title": "", "year": "", "url": "" },
+    { "outlet": "YouTube",   "kind": "Video",   "title": "", "year": "", "url": "" }
+  ]
+}
