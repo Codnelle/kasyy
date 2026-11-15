@@ -9,28 +9,28 @@
   // per-breakpoint layout for each object (from the original component), plus
   // personalized copy in Kashish's voice.
   var SLOTS = {
-    penholder: { img: 'penholder.png', z: 3,
+    penholder: { img: 'penholder.webp', z: 3,
       desktop: { w: 150, h: 220, x: .06, y: .21 }, tablet: { w: 125, h: 180, x: .13, y: .16 }, mobile: { w: 85, h: 120, x: .17, y: .30 },
       label: 'Pen holder', detail: 'Ideas get written down before they get hyped. If it can’t survive ink, it won’t survive a roadmap.' },
-    light: { img: 'mushroom-light.png', z: 2,
+    light: { img: 'mushroom-light.webp', z: 2,
       desktop: { w: 140, h: 140, x: 0, y: .33 }, tablet: { w: 120, h: 120, x: .015, y: .25 }, mobile: { w: 90, h: 90, x: .005, y: .36 },
       label: 'Lamp', detail: 'Flicks on the moment a fuzzy goal finally turns into a number worth moving.' },
-    plant: { img: 'plant.png', z: 1,
+    plant: { img: 'plant.webp', z: 1,
       desktop: { w: 200, h: 240, x: .28, y: .39 }, tablet: { w: 160, h: 190, x: .05, y: .45 }, mobile: { w: 110, h: 130, x: .05, y: .58 },
       label: 'Plant', detail: 'Low maintenance, high conviction — exactly the kind of early founder I like to bet on.' },
-    duck: { img: 'duck.png', z: 4,
+    duck: { img: 'duck.webp', z: 4,
       desktop: { w: 50, h: 50, x: .14, y: .44 }, tablet: { w: 42, h: 42, x: .28, y: .35 }, mobile: { w: 34, h: 34, x: .35, y: .45 },
       label: 'Debug duck', detail: 'My debugging partner and my most honest content-strategy focus group. Quacks back.' },
-    laptop: { img: 'laptop.png', z: 3,
+    laptop: { img: 'laptop.webp', z: 3,
       desktop: { w: 300, h: 260, x: .43, y: .40 }, tablet: { w: 230, h: 200, x: .38, y: .45 }, mobile: { w: 150, h: 130, x: .33, y: .58 },
       label: 'Laptop', detail: 'Where the roadmap meets the API docs. I open both before anyone starts building.' },
-    headphone: { img: 'headphone.png', z: 4,
+    headphone: { img: 'headphone.webp', z: 4,
       desktop: { w: 160, h: 160, x: .31, y: .69 }, tablet: { w: 125, h: 125, x: .18, y: .68 }, mobile: { w: 88, h: 88, x: .07, y: .76 },
       label: 'Headphones', detail: 'On means don’t pitch me. Deep work in progress — come back with the data.' },
-    matcha: { img: 'matcha.png', z: 3,
+    matcha: { img: 'matcha.webp', z: 3,
       desktop: { w: 130, h: 130, x: .63, y: .63 }, tablet: { w: 100, h: 100, x: .74, y: .65 }, mobile: { w: 72, h: 72, x: .74, y: .70 },
       label: 'Matcha', detail: 'Fuel, and a contrarian stance: matcha over coffee. Yes, that’s a hill.' },
-    keyboard: { img: 'keyboard.png', z: 5,
+    keyboard: { img: 'keyboard.webp', z: 5,
       desktop: { w: 250, h: 97, x: .44, y: .73 }, tablet: { w: 210, h: 82, x: .40, y: .70 }, mobile: { w: 150, h: 58, x: .34, y: .80 },
       label: 'Keyboard', detail: 'For shipping, not for slideware. Most of my best decisions were typed, not presented.' },
 
@@ -114,8 +114,8 @@
       + '<div class="deskx-eyebrow">off the clock</div>'
       + '<h2 class="deskx-title">Arrange my desk</h2>'
       + '<div class="deskx-stage" role="group" aria-label="Draggable desk">'
-      + '<img class="deskx-bg deskx-desk" src="/desk/desk.png" alt="Desk" draggable="false">'
-      + '<img class="deskx-bg deskx-shelf" src="/desk/shelf.png" alt="Shelf" draggable="false">'
+      + '<img class="deskx-bg deskx-desk" src="/desk/desk.webp" alt="Desk" draggable="false">'
+      + '<img class="deskx-bg deskx-shelf" src="/desk/shelf.webp" alt="Shelf" draggable="false">'
       + '<div class="deskx-prompt">Drag things around · click one to see what it’s for</div>'
       + '<div class="deskx-panel"><button aria-label="Close">×</button><h4></h4><p></p></div>'
       + '</div></div>';
