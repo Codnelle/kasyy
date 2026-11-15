@@ -176,6 +176,8 @@ for (const p of pages) {
   const PRESS = loadPress(path.join(REPO, 'press.json'));
   const pageKey = p.src.replace('.html', '');
   html = applyHead(html, PRESS, pageKey);
+  // pre-rendered reel <video>s: don't let the HTML parser start downloading them
+  html = html.replace(/(<video\b[^>]*?)preload="metadata"/g, '$1preload="none"');
   // same face-sticker swap in the pre-rendered HTML (must match the modules for hydration)
   html = html.replace(/data:image\/webp;base64,([A-Za-z0-9+\/=]+)/g, (m, b) => {
     const k = FACE_MAP[crypto.createHash('md5').update(b).digest('hex')];
@@ -224,7 +226,11 @@ function walk(dir) {
       // screen — it auto-advances, so it used to stream all six (~30MB) on phones
       t = t.split("a(()=>{let e=h.current;if(!(!e||m))if(p){let t=e.play();t&&typeof t.catch==`function`&&t.catch(()=>{})}else e.pause()},[p,m]);")
            .join("a(()=>{let e=h.current;if(!e||m)return;if(!p){e.pause();return}let io=new IntersectionObserver(([x])=>{if(x.isIntersecting){let t=e.play();t&&typeof t.catch==`function`&&t.catch(()=>{})}else e.pause()},{rootMargin:`200px`});io.observe(e);return()=>io.disconnect()},[p,m]);");
-      t = t.split("l(`video`,{ref:h,src:D,poster:O,muted:!0,loop:!0,playsInline:!0,preload:`metadata`,").join("l(`video`,{ref:h,src:D,poster:O,muted:!0,loop:!0,playsInline:!0,preload:p?`metadata`:`none`,");
+      t = t.split("l(`video`,{ref:h,src:D,poster:O,muted:!0,loop:!0,playsInline:!0,preload:`metadata`,").join("l(`video`,{ref:h,src:p?D:void 0,poster:O,muted:!0,loop:!0,playsInline:!0,preload:`none`,");
+      t = t.split("l(`video`,{ref:h,src:D,poster:O,muted:!0,loop:!0,playsInline:!0,preload:p?`metadata`:`none`,").join("l(`video`,{ref:h,src:p?D:void 0,poster:O,muted:!0,loop:!0,playsInline:!0,preload:`none`,");
+      t = t.split("l(`video`,{ref:h,src:p?D:void 0,poster:O,muted:!0,loop:!0,playsInline:!0,preload:p?`metadata`:`none`,").join("l(`video`,{ref:h,src:p?D:void 0,poster:O,muted:!0,loop:!0,playsInline:!0,preload:`none`,");
+      // /kasy "see the work" button had no href (not a crawlable link — Lighthouse SEO)
+      t = t.split("f(b.a,{href:m||void 0,whileHover:{y:-2,backgroundColor:h,color:`#fff`},transition:{duration:.2},\"data-cursor\":`the work`").join("f(b.a,{href:m||`#work`,whileHover:{y:-2,backgroundColor:h,color:`#fff`},transition:{duration:.2},\"data-cursor\":`the work`");
       // hero face stickers: tiny inline images -> 4K-upscaled (Higgsfield) files
       t = t.replace(/data:image\/webp;base64,([A-Za-z0-9+\/=]+)/g, (m, b) => {
         const k = FACE_MAP[crypto.createHash('md5').update(b).digest('hex')];
