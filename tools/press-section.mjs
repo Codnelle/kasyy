@@ -88,33 +88,67 @@ export function sectionHTML(d) {
 // name "Kashish Sharma" / "Kasy" to this site and those profiles.
 export function applyHead(html, d, pageKey) {
   const pg = (d.pages || {})[pageKey];
+  const SITE = d.site.replace(/\/$/, '');
+  const url = `${SITE}/${pageKey === 'index' ? '' : pageKey}`;
+  const img = SITE + (d.person.image || '');
+  const ogImg = SITE + (d.person.ogImage || d.person.image || '');
   if (pg) {
     const t = esc(pg.title), ds = esc(pg.description);
     html = html.replace(/<title>[^<]*<\/title>/i, `<title>${t}</title>`)
       .replace(/(<meta (?:name|property)="(?:og:|twitter:)?description" content=")[^"]*(")/gi, `$1${ds}$2`)
       .replace(/(<meta (?:name|property)="(?:og|twitter):title" content=")[^"]*(")/gi, `$1${t}$2`);
   }
-  const url = `${d.site}/${pageKey === 'index' ? '' : pageKey}`;
-  const ld = {
-    '@context': 'https://schema.org',
-    '@type': 'Person',
-    '@id': `${d.site}/#person`,
-    name: d.person.name,
-    alternateName: d.person.alternateName,
-    url,
-    jobTitle: pageKey === 'kasy' ? 'Designer & Creative Developer' : 'Product Manager',
+  // canonical + og:url pointed at the old Framer address — every page must name
+  // its real URL, or Google indexes (and credits) the wrong site
+  html = html.replace(/<link rel="canonical" href="[^"]*">/i, `<link rel="canonical" href="${url}">`)
+    .replace(/<meta property="og:url" content="[^"]*">/i, `<meta property="og:url" content="${url}">`)
+    .replace(/<meta name="robots" content="[^"]*">/i, '<meta name="robots" content="index, follow, max-image-preview:large">');
+  // one Person, referenced by @id from every page, so all pages describe the
+  // same entity: name, photo, roles, employer, awards and every profile (sameAs)
+  const person = {
+    '@type': 'Person', '@id': `${SITE}/#person`,
+    name: d.person.name, alternateName: d.person.alternateName,
+    givenName: d.person.givenName, familyName: d.person.familyName,
+    url: `${SITE}/`, image: { '@type': 'ImageObject', url: img, caption: d.person.name },
+    jobTitle: d.person.jobTitles,
+    worksFor: d.person.worksFor ? { '@type': 'Organization', name: d.person.worksFor } : undefined,
     homeLocation: { '@type': 'Place', name: d.person.location },
-    award: d.person.awards,
-    sameAs: d.profiles.map(p => p.url)
+    nationality: d.person.nationality ? { '@type': 'Country', name: d.person.nationality } : undefined,
+    award: d.person.awards, knowsAbout: d.person.knowsAbout,
+    description: d.person.description,
+    sameAs: [...d.profiles.map(p => p.url), ...(d.person.sameAs || [])]
   };
-  if (d.press.length) ld.subjectOf = d.press.map(p => ({
+  if (d.press.length) person.subjectOf = d.press.map(p => ({
     '@type': /video/i.test(p.kind) ? 'VideoObject' : 'Article',
-    name: p.title || `${p.outlet} ${p.kind || ''}`.trim(),
-    url: p.url,
+    name: p.title || `${p.outlet} ${p.kind || ''}`.trim(), url: p.url,
     publisher: { '@type': 'Organization', name: p.outlet },
     ...(p.year ? { datePublished: String(p.year) } : {})
   }));
+  const graph = [
+    { '@type': 'WebSite', '@id': `${SITE}/#website`, url: `${SITE}/`, name: d.person.name,
+      alternateName: d.person.alternateName, publisher: { '@id': `${SITE}/#person` } },
+    // ProfilePage is Google's type for "a page about one person" — the signal it
+    // uses to tie a site to a person's knowledge panel
+    { '@type': 'ProfilePage', '@id': `${url}#page`, url, name: pg ? pg.title : d.person.name,
+      isPartOf: { '@id': `${SITE}/#website` }, mainEntity: { '@id': `${SITE}/#person` },
+      primaryImageOfPage: { '@type': 'ImageObject', url: img } },
+    person
+  ];
+  const ld = { '@context': 'https://schema.org', '@graph': graph };
   const tags = d.profiles.map(p => `<link rel="me" href="${esc(p.url)}">`).join('')
+    + (d.person.sameAs || []).map(u => `<link rel="me" href="${esc(u)}">`).join('')
+    + `<meta name="author" content="${esc(d.person.name)}">`
+    + `<meta property="og:image" content="${ogImg}"><meta property="og:image:alt" content="${esc(d.person.name)}">`
+    + `<meta name="twitter:image" content="${ogImg}"><meta property="og:site_name" content="${esc(d.person.name)}">`
+    + `<meta property="profile:first_name" content="${esc(d.person.givenName || '')}"><meta property="profile:last_name" content="${esc(d.person.familyName || '')}">`
     + `<script type="application/ld+json">${JSON.stringify(ld).replace(/</g, '\\u003c')}</script>`;
   return html.replace(/<\/head>/i, tags + '</head>');
+}
+
+// robots.txt + sitemap.xml at the site root
+export function writeCrawlFiles(dir, d) {
+  const SITE = d.site.replace(/\/$/, ''), today = new Date().toISOString().slice(0, 10);
+  const urls = ['/', '/pm', '/kasy'].map(u => `  <url><loc>${SITE}${u}</loc><lastmod>${today}</lastmod></url>`).join('\n');
+  fs.writeFileSync(`${dir}/sitemap.xml`, `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls}\n</urlset>\n`);
+  fs.writeFileSync(`${dir}/robots.txt`, `User-agent: *\nAllow: /\n\nSitemap: ${SITE}/sitemap.xml\n`);
 }

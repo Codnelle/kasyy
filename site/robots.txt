@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://kasyy.vercel.app/sitemap.xml

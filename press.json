@@ -1,15 +1,40 @@
 {
   "_readme": "Single source for the 'Elsewhere' section on /pm + /kasy, the footer social links, and the SEO tags (JSON-LD sameAs, rel=me). Fill in a url and rebuild (node _raw/build.mjs). Entries with an empty url are skipped everywhere, so nothing broken ever ships.",
-
-  "site": "https://kasy.framer.website",
-
+  "site": "https://kasyy.vercel.app",
   "person": {
     "name": "Kashish Sharma",
     "alternateName": "Kasy",
     "location": "Bangalore, India",
-    "awards": ["Microsoft MVP", "Google Summer of Code contributor (2023, 2025)"]
+    "awards": [
+      "Microsoft Most Valuable Professional (MVP), 2024–2027",
+      "Google Summer of Code contributor, MIT App Inventor (2023, 2025)"
+    ],
+    "givenName": "Kashish",
+    "familyName": "Sharma",
+    "image": "/kasy-head/profile.jpg",
+    "ogImage": "/kasy-head/og.jpg",
+    "jobTitles": [
+      "Product Manager",
+      "Designer",
+      "Creative Developer"
+    ],
+    "worksFor": "Eazeebox",
+    "nationality": "India",
+    "description": "Kashish Sharma (Kasy) is a product manager and creative developer from Bangalore, India. Product Manager at Eazeebox, three-time Microsoft MVP and two-time Google Summer of Code contributor to MIT App Inventor, and a speaker at Microsoft Build and the Microsoft AI Tour.",
+    "knowsAbout": [
+      "Product management",
+      "Go-to-market strategy",
+      "Artificial intelligence",
+      "Web design",
+      "Creative development",
+      "Scroll storytelling",
+      "Shopify",
+      "Wix Studio"
+    ],
+    "sameAs": [
+      "https://github.com/Codnelle"
+    ]
   },
-
   "pages": {
     "index": {
       "title": "Kashish Sharma (Kasy) — Product & Design Portfolio",
@@ -24,18 +49,52 @@
       "description": "Kasy (Kashish Sharma) designs and builds scroll stories, storefronts, motion and websites that move. Creative development, art direction and fast shipping, from Bangalore."
     }
   },
-
   "profiles": [
-    { "network": "instagram", "label": "Instagram", "url": "https://instagram.com/kasy.ssh" },
-    { "network": "linkedin",  "label": "LinkedIn",  "url": "https://www.linkedin.com/in/kashishsharma601/" },
-    { "network": "youtube",   "label": "YouTube",   "url": "https://www.youtube.com/@KasyKube" },
-    { "network": "x",         "label": "X",         "url": "" },
-    { "network": "github",    "label": "GitHub",    "url": "" },
-    { "network": "topmate",   "label": "Topmate",   "url": "https://topmate.io/kashish_sharma" }
+    {
+      "network": "instagram",
+      "label": "Instagram",
+      "url": "https://instagram.com/kasy.ssh"
+    },
+    {
+      "network": "linkedin",
+      "label": "LinkedIn",
+      "url": "https://www.linkedin.com/in/kashishsharma601/"
+    },
+    {
+      "network": "youtube",
+      "label": "YouTube",
+      "url": "https://www.youtube.com/@KasyKube"
+    },
+    {
+      "network": "x",
+      "label": "X",
+      "url": ""
+    },
+    {
+      "network": "github",
+      "label": "GitHub",
+      "url": ""
+    },
+    {
+      "network": "topmate",
+      "label": "Topmate",
+      "url": "https://topmate.io/kashish_sharma"
+    }
   ],
-
   "press": [
-    { "outlet": "Microsoft", "kind": "Blog",    "title": "", "year": "", "url": "" },
-    { "outlet": "YouTube",   "kind": "Video",   "title": "", "year": "", "url": "" }
+    {
+      "outlet": "Microsoft",
+      "kind": "Blog",
+      "title": "",
+      "year": "",
+      "url": ""
+    },
+    {
+      "outlet": "YouTube",
+      "kind": "Video",
+      "title": "",
+      "year": "",
+      "url": ""
+    }
   ]
 }

@@ -1,11 +1,14 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { loadPress, sectionHTML, applyHead } from './press-section.mjs';
+import crypto from 'node:crypto';
+import { loadPress, sectionHTML, applyHead, writeCrawlFiles } from './press-section.mjs';
 
 const REPO = '/Users/kashish/Desktop/portfolio';
 const FOOTER_SOCIAL = [['https://(?:www\\.)?linkedin\\.com/in/[^`]*', 'linkedin'], ['https://topmate\\.io/[^`]*', 'topmate']];
 const PROFILE_URL = net => ((JSON.parse(fs.readFileSync(path.join(REPO, 'press.json'), 'utf8')).profiles || []).find(p => p.network === net) || {}).url || '';
 const SITE = path.join(REPO, 'site');
+// md5(original inline base64) -> upscaled face sticker in site/faces/
+const FACE_MAP = {"19b2d8ba131a9236717e9ad72c54eed4": 2, "500e914bfc11dc85c63e0edd8a4a88fb": 1, "d87427a4333c022b1d67a444cadec9eb": 0, "4288eedbacac6683e3dea5039a37e136": 3, "937c85619e2760510b774eae7ec7f614": 4, "cfffb44a38a47e9bfe1b3588a051c7d0": 5};
 
 // /kasy front-row projects (user's picks, 2026-09-30) — drives BOTH the "selected
 // work" orbit and the "in detail" stacked cards. Images are homepage screenshots
@@ -173,6 +176,12 @@ for (const p of pages) {
   const PRESS = loadPress(path.join(REPO, 'press.json'));
   const pageKey = p.src.replace('.html', '');
   html = applyHead(html, PRESS, pageKey);
+  // same face-sticker swap in the pre-rendered HTML (must match the modules for hydration)
+  html = html.replace(/data:image\/webp;base64,([A-Za-z0-9+\/=]+)/g, (m, b) => {
+    const k = FACE_MAP[crypto.createHash('md5').update(b).digest('hex')];
+    return k === undefined ? m : `/faces/face-${k}.webp`;
+  });
+  html = html.replace(/<html(?![^>]*\blang=)([^>]*)>/i, '<html lang="en"$1>');
   html = html.split('Built in Framer. Designed at unreasonable hours.').join('Designed at unreasonable hours.');
   for (const [re, net] of FOOTER_SOCIAL) { const u = PROFILE_URL(net); if (u) html = html.replace(new RegExp('href="' + re.replace('[^`]*', '[^"]*') + '"', 'g'), 'href="' + u + '"'); }
   // same youtube link in the pre-rendered footer (identical markup to the topmate one, so hydration matches)
@@ -211,6 +220,16 @@ function walk(dir) {
       // components inject their own Google Fonts <link>s at runtime — point them at
       // the local aliased (Fraunces/Inter) stylesheets too, or the old fonts load
       for (const [orig, local] of Object.entries(fontMap)) t = t.split(orig).join(local);
+      // /pm reels: only the ACTIVE reel may load, and only while the carousel is on
+      // screen — it auto-advances, so it used to stream all six (~30MB) on phones
+      t = t.split("a(()=>{let e=h.current;if(!(!e||m))if(p){let t=e.play();t&&typeof t.catch==`function`&&t.catch(()=>{})}else e.pause()},[p,m]);")
+           .join("a(()=>{let e=h.current;if(!e||m)return;if(!p){e.pause();return}let io=new IntersectionObserver(([x])=>{if(x.isIntersecting){let t=e.play();t&&typeof t.catch==`function`&&t.catch(()=>{})}else e.pause()},{rootMargin:`200px`});io.observe(e);return()=>io.disconnect()},[p,m]);");
+      t = t.split("l(`video`,{ref:h,src:D,poster:O,muted:!0,loop:!0,playsInline:!0,preload:`metadata`,").join("l(`video`,{ref:h,src:D,poster:O,muted:!0,loop:!0,playsInline:!0,preload:p?`metadata`:`none`,");
+      // hero face stickers: tiny inline images -> 4K-upscaled (Higgsfield) files
+      t = t.replace(/data:image\/webp;base64,([A-Za-z0-9+\/=]+)/g, (m, b) => {
+        const k = FACE_MAP[crypto.createHash('md5').update(b).digest('hex')];
+        return k === undefined ? m : `/faces/face-${k}.webp`;
+      });
       // /kasy front-row projects from WORK (see top): "in detail" stack + orbit
       // screenshots are wide and every site's headline sits on the left — anchor the crop there
       t = t.split('g?l(`img`,{src:g,alt:``,style:{width:`100%`,height:`100%`,objectFit:`cover`,display:`block`}})').join('g?l(`img`,{src:g,alt:``,style:{width:`100%`,height:`100%`,objectFit:`cover`,objectPosition:`left center`,display:`block`}})');
@@ -404,4 +423,5 @@ console.log('rewrote module absolute URLs');
   }
   console.log('module version', ver);
 }
+writeCrawlFiles(SITE, loadPress(path.join(REPO, 'press.json')));   // robots.txt + sitemap.xml
 console.log('BUILD DONE');
